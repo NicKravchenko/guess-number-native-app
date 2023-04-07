@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, FlatList } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -7,6 +7,7 @@ import NumberContainer from "../components/game/NumberContainer";
 import PrimaryButton from "../components/ui/PrimaryButton";
 import InstructionText from "../components/ui/InstructionText";
 import Card from "../components/ui/Card";
+import GuessLogItem from "../components/game/GuessLogItem";
 
 function generateRandomBetween(min, max, exclude) {
   min = Math.ceil(min);
@@ -25,12 +26,18 @@ let maxBound = 100;
 function GameScreen({ userChoice, onGameOver }) {
   const initialGuess = generateRandomBetween(1, 100, userChoice);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
+  const [rounds, setRounds] = useState([initialGuess]);
 
   useEffect(() => {
     if (currentGuess === userChoice) {
-      onGameOver();
+      onGameOver(guessRounds);
     }
   }, [currentGuess, userChoice, onGameOver]);
+
+  useEffect(() => {
+    minBound = 1;
+    maxBound = 100;
+  }, []);
 
   function nextGuessHandler(direction) {
     if (
@@ -53,7 +60,9 @@ function GameScreen({ userChoice, onGameOver }) {
       currentGuess
     );
     setCurrentGuess(newRndNumber);
+    setRounds((curRounds) => [newRndNumber, ...curRounds]);
   }
+  const guessRounds = rounds.length;
 
   return (
     <View style={styles.screen}>
@@ -81,7 +90,15 @@ function GameScreen({ userChoice, onGameOver }) {
           </View>
         </View>
       </Card>
-      {/* <View>LOG ROUNDS</View> */}
+      <View style={styles.resultsContainer}>
+        <FlatList
+          data={rounds}
+          renderItem={(item) => (
+            <GuessLogItem round={guessRounds - item.index} guess={item.item} />
+          )}
+          keyExtractor={(item) => item}
+        />
+      </View>
     </View>
   );
 }
@@ -91,6 +108,8 @@ export default GameScreen;
 const styles = StyleSheet.create({
   screen: {
     padding: 12,
+    flexDirection: "column",
+    height: "100%",
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -104,5 +123,10 @@ const styles = StyleSheet.create({
   buttonsStyle: {
     fontSize: 24,
     fontWeight: "bold",
+  },
+  resultsContainer: {
+    height: "100%",
+    flex: 1,
+    paddingHorizontal: 20,
   },
 });
