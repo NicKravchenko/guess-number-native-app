@@ -4,16 +4,16 @@ import {
   ImageBackground,
   SafeAreaView,
   Platform,
-  StatusBar,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState, useEffect, useCallback } from "react";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 
 import StartGameScreen from "./screens/StartGameScreen";
 import GameScreen from "./screens/GameScreen";
-import colors from "./constants/colors";
+import colors from "./constants/colors.ios";
 import GameOverScreen from "./screens/GameOverScreen";
 
 SplashScreen.preventAutoHideAsync(); // Keep the splash screen visible while we fetch resources
@@ -97,22 +97,25 @@ export default function App() {
   }
 
   return (
-    <LinearGradient
-      colors={[colors.color3, colors.color5]}
-      style={styles.rootScreen}
-      onLayout={onLayoutRootView}
-    >
-      <ImageBackground
-        source={require("./assets/images/background.png")}
-        resizeMode="cover"
+    <>
+      <StatusBar style="light" />
+      <LinearGradient
+        colors={[colors.color3, colors.color5]}
         style={styles.rootScreen}
-        imageStyle={styles.backgroundImage}
+        onLayout={onLayoutRootView}
       >
-        <SafeAreaView style={(styles.rootScreen, styles.AndroidSafeArea)}>
-          {screen}
-        </SafeAreaView>
-      </ImageBackground>
-    </LinearGradient>
+        <ImageBackground
+          source={require("./assets/images/background.png")}
+          resizeMode="cover"
+          style={styles.rootScreen}
+          imageStyle={styles.backgroundImage}
+        >
+          <SafeAreaView style={(styles.rootScreen, styles.AndroidSafeArea)}>
+            {screen}
+          </SafeAreaView>
+        </ImageBackground>
+      </LinearGradient>
+    </>
   );
 }
 
